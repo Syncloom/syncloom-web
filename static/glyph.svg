@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Syncloom glyph</title>
+  <defs>
+    <!-- carve a gap around each strand that passes over the other ring -->
+    <mask id="gapTop" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <path d="M441.2 299 A224 224 0 0 1 582.5 435.4" fill="none" stroke="#000" stroke-width="150"/>
+    </mask>
+    <mask id="gapBottom" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <path d="M582.8 725 A224 224 0 0 1 441.5 588.6" fill="none" stroke="#000" stroke-width="150"/>
+    </mask>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="84" stroke-linecap="round">
+    <g mask="url(#gapBottom)"><circle cx="372" cy="512" r="224"/></g>
+    <g mask="url(#gapTop)"><circle cx="652" cy="512" r="224"/></g>
+    <path d="M441.2 299 A224 224 0 0 1 582.5 435.4" stroke-linecap="butt"/>
+    <path d="M582.8 725 A224 224 0 0 1 441.5 588.6" stroke-linecap="butt"/>
+  </g>
+</svg>
