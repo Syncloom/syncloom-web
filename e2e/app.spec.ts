@@ -185,6 +185,11 @@ test.describe.serial('Syncloom in a real browser', () => {
 		await page.getByRole('button', { name: 'Create link' }).click();
 		linkUrl = (await page.locator('.fresh code').innerText()).trim();
 		expect(linkUrl).toMatch(/\/s\/[^#]+#k=/);
+		// the long link must not push the dialog wider than its panel
+		const panel = (await page.getByRole("dialog").boundingBox())!;
+		const fresh = (await page.locator(".fresh").boundingBox())!;
+		expect(fresh.x + fresh.width).toBeLessThanOrEqual(panel.x + panel.width);
+		expect(await page.getByRole("dialog").evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
 		await shot(page, '10-share-dialog');
 		await page.keyboard.press('Escape');
 
@@ -201,6 +206,8 @@ test.describe.serial('Syncloom in a real browser', () => {
 		await shot(pub, '11-public-link');
 		const [d] = await Promise.all([pub.waitForEvent('download'), pub.getByRole('button', { name: /Download/ }).click()]);
 		expect(fs.readFileSync((await d.path())!, 'utf8')).toBe('Hello from the browser, encrypted before upload.');
+		// the saved file carries the decrypted name, extension included
+		expect(d.suggestedFilename()).toBe("greeting.txt");
 		// the key is required: without the fragment nothing can be decrypted
 		await pub.goto(linkUrl.split('#')[0]);
 		await expect(pub.getByText(/link is incomplete/)).toBeVisible();

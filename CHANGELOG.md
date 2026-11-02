@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/). Syncloom is a public preview until 1.0.
 
+## [Unreleased]
+
+### Fixed
+- A long public link no longer widens the Share dialog beyond the window. Dialog content can shrink, and the link is cut with an ellipsis next to the Copy button.
+- Downloads (own files and public links) are handed to the browser with a type derived from the extension and a link attached to the page, so Safari and Firefox keep the decrypted name and extension.
+
 ## [0.1.0] - 2026-11-02
 
 First public preview.

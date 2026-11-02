@@ -72,6 +72,7 @@
 		padding: 18px 20px 6px;
 	}
 	.body {
+		grid-template-columns: minmax(0, 1fr); /* a long unbreakable line (a link) must not widen the dialog */
 		padding: 10px 20px 18px;
 		overflow: auto;
 		display: grid;

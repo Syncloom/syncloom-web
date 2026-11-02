@@ -207,6 +207,7 @@
 		font-weight: 700;
 	}
 	.fresh {
+		min-width: 0;
 		display: flex;
 		gap: 10px;
 		align-items: center;
@@ -216,6 +217,7 @@
 	}
 	.fresh code {
 		flex: 1;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

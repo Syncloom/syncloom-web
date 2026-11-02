@@ -315,10 +315,7 @@ export async function saveToDisk(node: FsNode, version?: string, onProgress?: (p
 		}
 		return;
 	}
-	const blob = await downloadBlob(node, version, onProgress);
-	const url = URL.createObjectURL(blob);
-	Object.assign(document.createElement('a'), { href: url, download: node.name }).click();
-	setTimeout(() => URL.revokeObjectURL(url), 10_000);
+	saveAs(await downloadBlob(node, version, onProgress), node.name);
 }
 
 // ---------- versions ----------
@@ -452,8 +449,31 @@ export class PublicLink {
 	async save(node: FsNode) {
 		const parts: BlobPart[] = [];
 		for await (const c of this.chunks(node)) parts.push(c as unknown as BlobPart);
-		const url = URL.createObjectURL(new Blob(parts));
-		Object.assign(document.createElement('a'), { href: url, download: node.name }).click();
-		setTimeout(() => URL.revokeObjectURL(url), 10_000);
+		saveAs(parts, node.name);
 	}
+}
+
+const MIME: Record<string, string> = {
+	txt: 'text/plain', md: 'text/markdown', csv: 'text/csv', html: 'text/html', json: 'application/json', yaml: 'application/yaml', yml: 'application/yaml',
+	xml: 'application/xml', pdf: 'application/pdf', zip: 'application/zip', gz: 'application/gzip', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+	gif: 'image/gif', webp: 'image/webp', svg: 'image/svg+xml', mp3: 'audio/mpeg', mp4: 'video/mp4', mov: 'video/quicktime', doc: 'application/msword',
+	docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', xls: 'application/vnd.ms-excel',
+	xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', ppt: 'application/vnd.ms-powerpoint',
+	pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+};
+
+/**
+ * Hand a decrypted file to the browser's download. Browsers decide the saved name from the `download` attribute, but some
+ * (Safari) fall back to "Unknown" for a blob without a type, so the type comes from the extension, and the link is
+ * attached to the page while it is clicked (Firefox).
+ */
+export function saveAs(data: BlobPart[] | Blob, name: string) {
+	const type = MIME[name.split('.').pop()?.toLowerCase() ?? ''] ?? 'application/octet-stream';
+	const blob = data instanceof Blob ? new Blob([data], { type: data.type || type }) : new Blob(data, { type });
+	const url = URL.createObjectURL(blob);
+	const a = Object.assign(document.createElement('a'), { href: url, download: name, hidden: true });
+	document.body.append(a);
+	a.click();
+	a.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
